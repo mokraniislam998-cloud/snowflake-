@@ -112,9 +112,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             header("Location: " . strtok($_SERVER["REQUEST_URI"], '?') . "?success=1&nip=" . urlencode($post("nip")));
             exit;
 
-            // Optionnel: vider POST pour éviter de re-remplir après succès
-            // $_POST = [];
-
         } catch (Throwable $e) {
             if ($pdo->inTransaction()) $pdo->rollBack();
 
@@ -198,13 +195,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <span>Nouveau Patient</span>
       </a>
     </nav>
-
-    <div class="topbar-right">
-      <a class="mini-link" href="#">
-        <i class="fa-solid fa-user-plus"></i>
-        <span>Nouveau patient</span>
-      </a>
-    </div>
 
   </div>
 </header>
