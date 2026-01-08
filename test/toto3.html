@@ -1,0 +1,1775 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tableau de Bord Complet - Oncologie</title>
+
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .08);
+      --radius: 16px;
+
+      --primary:#355f8e;
+      --primary2:#2f6fed;
+
+      --green:#22c55e;
+      --orange:#f59e0b;
+      --red:#ef4444;
+      --teal:#12b981;
+
+      --chip:#eef2f6;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background: var(--bg);
+    }
+    a{ color:inherit }
+
+    .wrap{ max-width: 1280px; margin: 0 auto; padding: 18px 22px 60px; }
+
+    /* ===== Top header ===== */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 6px 0 10px;
+    }
+    .title{
+      display:flex; align-items:center; gap:10px;
+      font-weight: 1000;
+      font-size: 22px;
+      color:#1f7fbf;
+    }
+    .title i{ color:#1f7fbf; }
+    .top-right{
+      display:flex; align-items:center; gap:10px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+
+    /* ===== Main nav (haut) ===== */
+    .nav{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+      margin: 8px 0 14px;
+    }
+    .nav a{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: .15s background, .15s color, .15s box-shadow;
+    }
+    .nav a:hover{
+      background:#fff;
+      box-shadow: 0 10px 18px rgba(15,23,42,.06);
+      color: var(--text);
+    }
+    .nav a.active{
+      background: var(--primary);
+      color:#fff;
+      box-shadow: 0 10px 18px rgba(53,95,142,.18);
+    }
+
+    /* ===== Sub tabs (dans dashboard) ===== */
+    .subtabs{
+      background:#eef2f6;
+      border-radius: 999px;
+      padding: 6px;
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      overflow:auto;
+      border:1px solid #e8edf5;
+      margin-bottom: 14px;
+    }
+    .subtabs button{
+      border:none;
+      background:transparent;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 1000;
+      color: var(--muted);
+      cursor:pointer;
+      white-space:nowrap;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+    }
+    .subtabs button.active{
+      background:#fff;
+      color:#0f172a;
+      box-shadow: 0 10px 18px rgba(15,23,42,.06);
+      border:1px solid var(--line);
+    }
+
+    /* ===== Generic cards ===== */
+    .panel{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .section{ display:none; }
+    .section.active{ display:block; }
+
+    .grid-4{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 1100px){ .grid-4{ grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 650px){ .grid-4{ grid-template-columns: 1fr; } }
+
+    .kpi{
+      padding: 16px;
+      min-height: 92px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .kpi h4{
+      margin:0;
+      font-size: 12px;
+      font-weight: 1000;
+      color:#0f172a;
+    }
+    .kpi .big{
+      font-size: 28px;
+      font-weight: 1100;
+      margin-top: 10px;
+      letter-spacing:.2px;
+    }
+    .kpi .sub{
+      margin-top: 4px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 11px;
+    }
+    .kpi .icon{
+      color: var(--muted);
+      font-size: 14px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background:#f8fafc;
+      border:1px solid #edf2f7;
+    }
+    .kpi .right{
+      text-align:right;
+      min-width: 140px;
+    }
+    .mini-progress{
+      height: 10px;
+      border-radius: 999px;
+      background:#eef2f6;
+      overflow:hidden;
+      margin-top: 12px;
+    }
+    .mini-progress > div{
+      height:100%;
+      width:72%;
+      background: var(--primary);
+    }
+
+    /* ===== Alerts ===== */
+    .block{
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .block-title{
+      display:flex; gap:10px; align-items:center;
+      font-weight: 1100;
+      font-size: 18px;
+      margin:0 0 12px;
+    }
+    .alert{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+      margin-top: 10px;
+    }
+    .alert .left{
+      display:flex; gap:12px; align-items:flex-start;
+      font-weight: 900;
+    }
+    .alert .left i{ margin-top: 2px; }
+    .alert .desc{
+      margin-top: 4px;
+      font-weight: 800;
+      font-size: 12px;
+      color:#334155;
+    }
+    .badge{
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      border:1px solid rgba(0,0,0,.06);
+      background:#fff;
+      color:#334155;
+      white-space:nowrap;
+      height: fit-content;
+    }
+    .a-med{ background: rgba(245,158,11,.10); border-color: rgba(245,158,11,.20); }
+    .a-high{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.20); }
+    .a-low{ background: rgba(47,111,237,.10); border-color: rgba(47,111,237,.20); }
+
+    /* ===== Planning par fauteuil (colonnes) ===== */
+    .chair-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+    @media (max-width: 1100px){ .chair-grid{ grid-template-columns: 1fr; } }
+
+    .chair-col{ padding: 14px; }
+    .chair-head{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+      margin-bottom: 8px;
+    }
+    .chair-head .name{
+      display:flex; gap:10px; align-items:center;
+      font-weight: 1100;
+    }
+    .util{
+      color: var(--muted);
+      font-weight: 1000;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .utilbar{
+      height: 8px;
+      border-radius: 999px;
+      background:#eef2f6;
+      overflow:hidden;
+      margin: 8px 0 10px;
+    }
+    .utilbar > div{ height:100%; width:75%; background: var(--primary); }
+
+    .session{
+      border:1px solid #eef2f6;
+      border-radius: 14px;
+      padding: 12px;
+      background:#fff;
+      box-shadow: 0 10px 18px rgba(15,23,42,.05);
+      margin-top: 10px;
+    }
+    .session .top{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .pills{ display:flex; gap:8px; flex-wrap:wrap; }
+    .pill{
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      border:1px solid rgba(0,0,0,.06);
+      background:#f8fafc;
+      color:#0f172a;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      white-space:nowrap;
+    }
+    .pill.blue{ background: rgba(47,111,237,.10); border-color: rgba(47,111,237,.18); color:#1d4ed8; }
+    .pill.orange{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.20); color:#92400e; }
+    .pill.green{ background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.18); color:#166534; }
+    .pill.red{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.18); color:#991b1b; }
+    .pill.gray{ background: rgba(148,163,184,.14); border-color: rgba(148,163,184,.20); color:#334155; }
+
+    .session .who{ font-weight: 1100; margin-top: 8px; }
+    .session .meta{
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      display:flex;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+    .tagline{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background:#f8fafc;
+      border:1px solid #eef2f6;
+      color:#334155;
+      font-weight: 900;
+      font-size: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+    }
+    .mini-icons{
+      display:flex; gap:10px; align-items:center;
+      color:#94a3b8;
+    }
+
+    /* ===== Two cols blocks ===== */
+    .grid-2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 1100px){ .grid-2{ grid-template-columns: 1fr; } }
+
+    .box{ padding: 16px; }
+    .box h3{
+      margin:0 0 12px;
+      font-size: 18px;
+      font-weight: 1100;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .hbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 1000;
+      font-size: 13px;
+    }
+    .hbar:last-child{ border-bottom:none; }
+    .hbar .left{ display:flex; gap:10px; align-items:center; }
+    .hbar .count{
+      min-width: 28px;
+      text-align:center;
+      font-weight: 1100;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background:#f1f5f9;
+      border:1px solid #e2e8f0;
+      color:#0f172a;
+    }
+    .spark{
+      height: 8px;
+      width: 74px;
+      border-radius: 999px;
+      background:#eef2f6;
+      overflow:hidden;
+      margin-left:auto;
+    }
+    .spark > div{ height:100%; width: 55%; background: var(--primary); }
+
+    /* ===== Peak hours ===== */
+    .peaks{ margin-top: 14px; }
+    .peak-row{
+      display:grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 1100px){ .peak-row{ grid-template-columns: repeat(3, 1fr);} }
+    .peak{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      text-align:center;
+    }
+    .peak .t{ color: var(--muted); font-weight: 900; font-size: 11px; }
+    .peak .bar{
+      height: 42px;
+      border-radius: 8px;
+      background:#eef2f6;
+      overflow:hidden;
+      margin: 10px 0 8px;
+      display:flex;
+      align-items:flex-end;
+    }
+    .peak .bar > div{
+      width:100%;
+      height: 70%;
+      background: var(--primary);
+      border-radius: 8px;
+    }
+    .peak .n{ font-weight: 1100; font-size: 12px; }
+
+    /* ===== Planning global (grille hebdo) ===== */
+    .week{
+      padding: 16px;
+    }
+    .week-head{
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
+      margin-bottom: 12px;
+    }
+    .week-head h2{
+      margin:0;
+      font-weight: 1100;
+      font-size: 22px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .week-nav{
+      display:flex; gap:8px; align-items:center; color: var(--muted); font-weight: 1000;
+    }
+    .iconbtn{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 12px;
+      padding: 10px 12px;
+      cursor:pointer;
+      box-shadow: 0 10px 18px rgba(15,23,42,.05);
+    }
+    .grid-week{
+      display:grid;
+      grid-template-columns: 160px repeat(7, 1fr);
+      gap: 12px;
+      align-items:stretch;
+    }
+    @media (max-width: 1100px){ .grid-week{ grid-template-columns: 1fr; } }
+
+    .col-head{
+      color: var(--muted);
+      font-weight: 1000;
+      font-size: 12px;
+      text-align:center;
+      padding: 6px 0;
+    }
+    .chair-label{
+      background:#f1f5f9;
+      border:1px solid #e2e8f0;
+      border-radius: 14px;
+      min-height: 84px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-weight:1100;
+    }
+    .cell{
+      border:1px dashed #e2e8f0;
+      border-radius: 14px;
+      min-height: 84px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 1000;
+      color:#94a3b8;
+      background:#fff;
+    }
+
+    /* ===== Patients grid (cartes colorées) ===== */
+    .filters{
+      padding: 16px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:flex-end;
+      flex-wrap:wrap;
+    }
+    .filters h2{
+      margin:0;
+      font-weight:1100;
+      font-size: 20px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .frow{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .input, .select{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 12px;
+      background:#fff;
+      font-weight: 900;
+      color:#0f172a;
+      min-width: 220px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .select{ min-width: 180px; cursor:pointer; }
+    .smallpill{
+      border-radius:999px;
+      padding: 7px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      background:#eef2f6;
+      border:1px solid #e2e8f0;
+      color:#334155;
+    }
+
+    .patients-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 1100px){ .patients-grid{ grid-template-columns: 1fr; } }
+
+    .pCard{
+      border-radius: 16px;
+      padding: 16px;
+      color:#fff;
+      border: 2px solid transparent;
+      box-shadow: 0 14px 26px rgba(15,23,42,.10);
+      min-height: 220px;
+    }
+    .pCard.blue{ background:#2f86d9; }
+    .pCard.purple{ background:#6a4be3; }
+    .pCard.green{ background:#1fd6a7; }
+    .pCard.lime{ background:#16a34a; }
+    .pCard.orange{ background:#f59e0b; color:#1f2937; }
+    .pCard .head{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .pCard .nm{ font-weight: 1100; font-size: 18px; }
+    .pCard .sub{ margin-top: 8px; font-weight: 900; font-size: 12px; opacity:.95; }
+    .pCard .line{ margin-top: 10px; font-weight: 900; font-size: 12px; opacity:.95; display:flex; gap:12px; flex-wrap:wrap;}
+    .pCard .mini{
+      margin-top: 12px;
+      font-weight: 1000;
+      font-size: 12px;
+      opacity:.95;
+    }
+    .pTag{
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      background: rgba(255,255,255,.20);
+      border:1px solid rgba(255,255,255,.25);
+      display:inline-flex;
+      gap: 8px;
+      align-items:center;
+      white-space:nowrap;
+    }
+    .pTag.dark{
+      background: rgba(15,23,42,.10);
+      border-color: rgba(15,23,42,.12);
+      color:#0f172a;
+    }
+
+    /* ===== Workflow empty state ===== */
+    .empty{
+      padding: 70px 16px;
+      text-align:center;
+      color: var(--muted);
+    }
+    .empty i{
+      font-size: 42px;
+      color:#94a3b8;
+      margin-bottom: 10px;
+    }
+    .empty h2{
+      margin:10px 0 6px;
+      color:#0f172a;
+      font-weight: 1100;
+    }
+    .empty p{
+      margin:0;
+      font-weight: 900;
+      color: #64748b;
+    }
+
+    /* ===== Protocoles cards ===== */
+    .proto-grid{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 1100px){ .proto-grid{ grid-template-columns: 1fr; } }
+
+    .protoCard{
+      border-radius: 16px;
+      overflow:hidden;
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
+      background:#fff;
+    }
+    .protoTop{
+      padding: 16px;
+      color:#fff;
+      font-weight: 1100;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .protoTop.blue{ background:#2f86d9; }
+    .protoTop.purple{ background:#6a4be3; }
+    .protoTop.orange{ background:#f59e0b; }
+    .protoTop.green{ background:#22c55e; }
+    .protoTop.teal{ background:#1fd6a7; }
+
+    .protoBody{ padding: 16px; }
+    .protoBody .row{ margin-top: 6px; font-weight: 900; font-size: 12px; color:#0f172a; }
+    .protoBody .mut{ color: var(--muted); }
+    .chips2{ margin-top: 10px; display:flex; flex-wrap:wrap; gap: 8px; }
+    .chip2{
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      border:1px solid #e2e8f0;
+      background:#f8fafc;
+    }
+
+    /* ===== EPI ===== */
+    .epi{
+      padding: 16px;
+    }
+    .epi h2{
+      margin:0;
+      font-weight:1100;
+      font-size: 22px;
+      display:flex; gap:10px; align-items:center;
+    }
+    .epi .hint{ margin-top: 8px; color: var(--muted); font-weight: 900; font-size: 12px; }
+
+    .epi-select{
+      margin-top: 14px;
+      border:2px solid rgba(47,111,237,.35);
+      border-radius: 14px;
+      padding: 12px 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:center;
+      background:#fff;
+    }
+    .epi-select .sel{
+      font-weight: 1000;
+      font-size: 13px;
+      color:#0f172a;
+    }
+    .epi-card{
+      margin-top: 14px;
+      padding: 16px;
+    }
+    .epi-top{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .epi-top .p{
+      font-weight: 1100;
+    }
+    .epi-top .p small{
+      display:block;
+      color: var(--muted);
+      font-weight: 900;
+      margin-top: 4px;
+    }
+    .epi-stats{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .statpill{
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      background:#eef2f6;
+      border:1px solid #e2e8f0;
+      color:#0f172a;
+      white-space:nowrap;
+    }
+    .statpill.red{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.18); color:#991b1b; }
+    .epi-tabs{
+      margin-top: 12px;
+      background:#f1f5f9;
+      border-radius: 14px;
+      padding: 8px;
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .epi-tabs button{
+      border:none;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 1100;
+      cursor:pointer;
+      color: var(--muted);
+      background:transparent;
+    }
+    .epi-tabs button.active{
+      background:#fff;
+      color:#0f172a;
+      box-shadow: 0 10px 18px rgba(15,23,42,.06);
+      border:1px solid var(--line);
+    }
+
+    .epi-alert{
+      margin-top: 14px;
+      border-radius: 14px;
+      padding: 14px;
+      border:1px solid rgba(239,68,68,.18);
+      background: rgba(239,68,68,.08);
+      color:#991b1b;
+      font-weight: 1000;
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .listbox{
+      margin-top: 14px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .listhead{
+      padding: 12px 14px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+      background:#fff;
+      border-bottom:1px solid #eef2f6;
+      font-weight: 1100;
+    }
+    .listhead .left{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .chev{ color: var(--muted); cursor:pointer; }
+    .item{
+      padding: 14px;
+      border-bottom:1px solid #f1f5f9;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .item:last-child{ border-bottom:none; }
+    .item .l{
+      display:flex; gap: 12px; align-items:flex-start;
+    }
+    .radio{
+      width:16px;height:16px;border-radius:999px;border:2px solid #cbd5e1;margin-top: 2px;
+    }
+    .item .name{ font-weight: 1100; }
+    .item .sub{
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+    }
+    .item .sub small{ display:inline-flex; gap:8px; align-items:center; }
+    .item .note{
+      margin-top: 10px;
+      border-radius: 12px;
+      background:#f8fafc;
+      border:1px solid #eef2f6;
+      padding: 10px;
+      color:#334155;
+      font-weight: 900;
+      font-size: 12px;
+    }
+    .righttags{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .rtag{
+      border-radius:999px;
+      padding: 6px 10px;
+      font-weight: 1100;
+      font-size: 11px;
+      border:1px solid rgba(0,0,0,.06);
+      background:#fff;
+      white-space:nowrap;
+    }
+    .rtag.critical{ background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.18); color:#991b1b; }
+    .rtag.high{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.20); color:#92400e; }
+    .rtag.req{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.18); color:#991b1b; }
+
+    .epi-actions{
+      margin-top: 14px;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      border:none;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-weight: 1100;
+      cursor:pointer;
+      display:inline-flex;
+      gap: 10px;
+      align-items:center;
+    }
+    .btn.primary{
+      background: rgba(53,95,142,.20);
+      color:#0f172a;
+      border:1px solid rgba(53,95,142,.30);
+      min-width: 320px;
+      justify-content:center;
+      flex: 1;
+    }
+    .btn.ghost{
+      background:#fff;
+      border:1px solid var(--line);
+      color:#0f172a;
+      box-shadow: 0 10px 18px rgba(15,23,42,.05);
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- TOP -->
+    <div class="topbar">
+      <div class="title"><i class="fa-solid fa-wave-square"></i> Tableau de Bord Complet - Oncologie</div>
+      <div class="top-right"><i class="fa-solid fa-users"></i> 6 patients total</div>
+    </div>
+
+    <!-- MAIN NAV -->
+    <nav class="nav" id="mainNav">
+      <a class="active" href="#" data-section="dash"><i class="fa-solid fa-gear"></i> Tableau de Bord</a>
+      <a href="#" data-section="planning"><i class="fa-solid fa-wave-square"></i> Planning Quotidien</a>
+      <a href="#" data-section="prog"><i class="fa-regular fa-calendar"></i> Programmation</a>
+      <a href="#" data-section="nurse"><i class="fa-solid fa-user-nurse"></i> Planning Infirmier</a>
+      <a href="#" data-section="newp"><i class="fa-solid fa-user-plus"></i> Nouveau Patient</a>
+    </nav>
+
+    <!-- ============ DASHBOARD (avec subtabs) ============ -->
+    <section id="dash" class="section active">
+
+      <div class="subtabs" id="subtabs">
+        <button class="active" data-sub="sessions"><i class="fa-solid fa-chair"></i> Sessions Fauteuils</button>
+        <button data-sub="overview"><i class="fa-solid fa-layer-group"></i> Vue d'Ensemble</button>
+        <button data-sub="global"><i class="fa-solid fa-calendar-week"></i> Planning Global</button>
+        <button data-sub="patients"><i class="fa-solid fa-users"></i> Patients</button>
+        <button data-sub="workflow"><i class="fa-solid fa-diagram-project"></i> Flux de Travail</button>
+        <button data-sub="protocols"><i class="fa-solid fa-flask"></i> Protocoles</button>
+        <button data-sub="epi"><i class="fa-solid fa-shield-halved"></i> EPI</button>
+      </div>
+
+      <!-- ===== SUB: Sessions fauteuils ===== -->
+      <div id="sessions" class="section active">
+
+        <div class="grid-4">
+          <div class="panel kpi">
+            <div>
+              <h4>Sessions Totales</h4>
+              <div class="big">14</div>
+              <div class="sub">5 en cours</div>
+            </div>
+            <div class="icon"><i class="fa-regular fa-calendar"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Sessions Terminées</h4>
+              <div class="big" style="color:var(--green)">3</div>
+              <div class="sub">sur 14 programmées</div>
+            </div>
+            <div class="icon"><i class="fa-regular fa-circle-check" style="color:var(--green)"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Retards</h4>
+              <div class="big" style="color:var(--orange)">1</div>
+              <div class="sub">Nécessitent attention</div>
+            </div>
+            <div class="icon"><i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Utilisation Fauteuils</h4>
+              <div class="big">72%</div>
+              <div class="mini-progress"><div></div></div>
+            </div>
+            <div class="icon"><i class="fa-solid fa-wave-square"></i></div>
+          </div>
+        </div>
+
+        <!-- Alertes -->
+        <div class="panel block">
+          <h2 class="block-title"><i class="fa-solid fa-circle-exclamation" style="color:var(--red)"></i> Alertes en Cours</h2>
+
+          <div class="alert" style="background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.18);">
+            <div class="left">
+              <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i>
+              <div>
+                <div><b>Fauteuil 2</b> - Sophie Dubois</div>
+                <div class="desc">Retard de 30min dû aux effets secondaires</div>
+              </div>
+            </div>
+            <span class="badge a-med">medium</span>
+          </div>
+
+          <div class="alert" style="background: rgba(239,68,68,.06); border-color: rgba(239,68,68,.16);">
+            <div class="left">
+              <i class="fa-solid fa-triangle-exclamation" style="color:var(--red)"></i>
+              <div>
+                <div><b>Fauteuil 6</b> - Michel Dupont</div>
+                <div class="desc">Surveillance cardiaque renforcée requise</div>
+              </div>
+            </div>
+            <span class="badge a-high">high</span>
+          </div>
+
+          <div class="alert" style="background: rgba(47,111,237,.06); border-color: rgba(47,111,237,.16);">
+            <div class="left">
+              <i class="fa-solid fa-triangle-exclamation" style="color:var(--primary2)"></i>
+              <div>
+                <div><b>Fauteuil 1</b> - Marie Dubois</div>
+                <div class="desc">Casque de froid non préparé</div>
+              </div>
+            </div>
+            <span class="badge a-low">low</span>
+          </div>
+
+          <div class="alert" style="background: rgba(245,158,11,.08); border-color: rgba(245,158,11,.18);">
+            <div class="left">
+              <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i>
+              <div>
+                <div><b>Fauteuil 2</b> - Paul Lefevre</div>
+                <div class="desc">Test auditif portable indisponible</div>
+              </div>
+            </div>
+            <span class="badge a-med">medium</span>
+          </div>
+        </div>
+
+        <!-- Planning par fauteuil -->
+        <div class="panel block">
+          <h2 class="block-title"><i class="fa-solid fa-chair"></i> Planning par Fauteuil - 25 octobre 2024</h2>
+
+          <div class="chair-grid">
+            <!-- Fauteuil 1 -->
+            <div class="panel chair-col" style="box-shadow:none">
+              <div class="chair-head">
+                <div class="name"><i class="fa-solid fa-chair"></i> Fauteuil 1</div>
+                <div class="util">83% utilisé</div>
+              </div>
+              <div class="utilbar"><div style="width:83%"></div></div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill orange">in-progress</span>
+                    <span class="pill green">normal</span>
+                  </div>
+                  <div class="util">08:00 - 12:00</div>
+                </div>
+                <div class="who">Gabriel Ivanovic</div>
+                <div class="meta">
+                  <span>FOLFOX</span><span>4/12</span><span>240min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill green">administration</span>
+                  <span class="mini-icons">
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--red)"></i>
+                    <i class="fa-regular fa-circle-check" style="color:var(--green)"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill blue">scheduled</span>
+                    <span class="pill green">normal</span>
+                  </div>
+                  <div class="util">13:00 - 15:30</div>
+                </div>
+                <div class="who">Marie Dubois</div>
+                <div class="meta">
+                  <span>PACLITAXEL</span><span>2/6</span><span>150min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill gray">check-in</span>
+                  <span class="mini-icons">
+                    <i class="fa-solid fa-user-nurse" style="color:var(--primary2)"></i>
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fauteuil 2 -->
+            <div class="panel chair-col" style="box-shadow:none">
+              <div class="chair-head">
+                <div class="name"><i class="fa-solid fa-chair"></i> Fauteuil 2</div>
+                <div class="util">67% utilisé</div>
+              </div>
+              <div class="utilbar"><div style="width:67%"></div></div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill orange">delayed</span>
+                    <span class="pill red">urgent</span>
+                  </div>
+                  <div class="util">09:00 - 13:30</div>
+                </div>
+                <div class="who">Sophie Dubois</div>
+                <div class="meta">
+                  <span>FOLFIRINOX</span><span>8/12</span><span>270min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill orange">monitoring</span>
+                  <span class="mini-icons">
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i>
+                    <i class="fa-regular fa-circle-check" style="color:var(--green)"></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill blue">scheduled</span>
+                    <span class="pill green">normal</span>
+                  </div>
+                  <div class="util">14:30 - 16:00</div>
+                </div>
+                <div class="who">Paul Lefevre</div>
+                <div class="meta">
+                  <span>CARBOPLATIN</span><span>1/4</span><span>90min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill orange">preparation</span>
+                  <span class="mini-icons">
+                    <i class="fa-solid fa-user-nurse" style="color:var(--primary2)"></i>
+                    <i class="fa-solid fa-bolt" style="color:#a855f7"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fauteuil 3 -->
+            <div class="panel chair-col" style="box-shadow:none">
+              <div class="chair-head">
+                <div class="name"><i class="fa-solid fa-chair"></i> Fauteuil 3</div>
+                <div class="util">72% utilisé</div>
+              </div>
+              <div class="utilbar"><div style="width:72%"></div></div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill orange">in-progress</span>
+                    <span class="pill green">normal</span>
+                  </div>
+                  <div class="util">10:00 - 14:00</div>
+                </div>
+                <div class="who">Ahmed Ben Salah</div>
+                <div class="meta">
+                  <span>CARBOPLATIN</span><span>3/6</span><span>240min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill green">administration</span>
+                  <span class="mini-icons"><i class="fa-solid fa-user-nurse" style="color:var(--primary2)"></i></span>
+                </div>
+              </div>
+
+              <div class="session">
+                <div class="top">
+                  <div class="pills">
+                    <span class="pill blue">scheduled</span>
+                    <span class="pill green">normal</span>
+                  </div>
+                  <div class="util">15:00 - 17:30</div>
+                </div>
+                <div class="who">Fatima Al-Hassan</div>
+                <div class="meta">
+                  <span>DOCETAXEL</span><span>5/8</span><span>150min</span>
+                </div>
+                <div class="tagline">
+                  <span class="pill orange">preparation</span>
+                  <span class="mini-icons">
+                    <i class="fa-solid fa-user-nurse" style="color:var(--primary2)"></i>
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Répartition phase + protocole -->
+          <div class="grid-2">
+            <div class="panel box">
+              <h3><i class="fa-regular fa-clock"></i> Répartition par Phase</h3>
+
+              <div class="hbar">
+                <div class="left"><span class="pill green">Administration</span></div>
+                <div class="count">5</div>
+                <div class="spark"><div style="width:70%"></div></div>
+              </div>
+              <div class="hbar">
+                <div class="left"><span class="pill orange">Preparation</span></div>
+                <div class="count">4</div>
+                <div class="spark"><div style="width:60%"></div></div>
+              </div>
+              <div class="hbar">
+                <div class="left"><span class="pill blue">Discharge</span></div>
+                <div class="count">3</div>
+                <div class="spark"><div style="width:45%"></div></div>
+              </div>
+              <div class="hbar">
+                <div class="left"><span class="pill gray">Monitoring</span></div>
+                <div class="count">2</div>
+                <div class="spark"><div style="width:30%"></div></div>
+              </div>
+              <div class="hbar">
+                <div class="left"><span class="pill gray">Check-In</span></div>
+                <div class="count">1</div>
+                <div class="spark"><div style="width:18%"></div></div>
+              </div>
+            </div>
+
+            <div class="panel box">
+              <h3><i class="fa-solid fa-stethoscope"></i> Répartition par Protocole</h3>
+
+              <div class="hbar"><div class="left">CARBOPLATIN</div><div class="count">2</div></div>
+              <div class="hbar"><div class="left">DOCETAXEL</div><div class="count">2</div></div>
+              <div class="hbar"><div class="left">TRASTUZUMAB</div><div class="count">2</div></div>
+              <div class="hbar"><div class="left">FOLFOX</div><div class="count">1</div></div>
+              <div class="hbar"><div class="left">FOLFIRINOX</div><div class="count">1</div></div>
+              <div class="hbar"><div class="left">FOLFIRI</div><div class="count">1</div></div>
+              <div class="hbar"><div class="left">PACLITAXEL</div><div class="count">1</div></div>
+              <div class="hbar"><div class="left">AC</div><div class="count">1</div></div>
+              <div class="hbar"><div class="left">CISPLATIN</div><div class="count">1</div></div>
+            </div>
+          </div>
+
+          <!-- Heures de pointe -->
+          <div class="panel box peaks">
+            <h3><i class="fa-solid fa-arrow-trend-up"></i> Heures de Pointe</h3>
+            <div class="peak-row">
+              <div class="peak"><div class="t">08:00-09:00</div><div class="bar"><div style="height:50%"></div></div><div class="n">3</div></div>
+              <div class="peak"><div class="t">09:00-10:00</div><div class="bar"><div style="height:65%"></div></div><div class="n">4</div></div>
+              <div class="peak"><div class="t">10:00-11:00</div><div class="bar"><div style="height:78%"></div></div><div class="n">5</div></div>
+              <div class="peak"><div class="t">11:00-12:00</div><div class="bar"><div style="height:92%"></div></div><div class="n">6</div></div>
+              <div class="peak"><div class="t">12:00-13:00</div><div class="bar"><div style="height:65%"></div></div><div class="n">4</div></div>
+              <div class="peak"><div class="t">13:00-14:00</div><div class="bar"><div style="height:78%"></div></div><div class="n">5</div></div>
+              <div class="peak"><div class="t">14:00-15:00</div><div class="bar"><div style="height:92%"></div></div><div class="n">6</div></div>
+              <div class="peak"><div class="t">15:00-16:00</div><div class="bar"><div style="height:65%"></div></div><div class="n">4</div></div>
+              <div class="peak"><div class="t">16:00-17:00</div><div class="bar"><div style="height:50%"></div></div><div class="n">3</div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ===== SUB: Vue d’ensemble ===== -->
+      <div id="overview" class="section">
+
+        <div class="grid-4">
+          <div class="panel kpi">
+            <div>
+              <h4>Patients Total</h4>
+              <div class="big">45</div>
+              <div class="sub">38 actifs</div>
+            </div>
+            <div class="icon"><i class="fa-solid fa-users"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Programmés Aujourd’hui</h4>
+              <div class="big">12</div>
+              <div class="sub">3 terminés</div>
+            </div>
+            <div class="icon"><i class="fa-regular fa-calendar"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Retards</h4>
+              <div class="big" style="color:var(--orange)">4</div>
+              <div class="sub">nécessitent attention</div>
+            </div>
+            <div class="icon"><i class="fa-solid fa-triangle-exclamation" style="color:var(--orange)"></i></div>
+          </div>
+
+          <div class="panel kpi">
+            <div>
+              <h4>Taux d’Occupation</h4>
+              <div class="big">75%</div>
+              <div class="mini-progress"><div style="width:75%"></div></div>
+            </div>
+            <div class="icon"><i class="fa-solid fa-wave-square"></i></div>
+          </div>
+        </div>
+
+        <div class="panel box" style="margin-top:14px;">
+          <h3><i class="fa-solid fa-flask"></i> Répartition par Protocoles de Chimiothérapie</h3>
+          <div class="grid-2">
+            <div>
+              <div class="hbar"><div class="left"><span class="pill blue">FOLFOX</span></div><div class="count">8</div></div>
+              <div class="hbar"><div class="left"><span class="pill green">EC</span></div><div class="count">4</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">XELOX</span></div><div class="count">2</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">TRASTUZUMAB</span></div><div class="count">2</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">BEVACIZUMAB</span></div><div class="count">1</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">ETOPOSIDE</span></div><div class="count">1</div></div>
+            </div>
+            <div>
+              <div class="hbar"><div class="left"><span class="pill purple">FOLFIRINOX</span></div><div class="count">6</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">FOLFIRI</span></div><div class="count">3</div></div>
+              <div class="hbar"><div class="left"><span class="pill orange">DOCETAXEL</span></div><div class="count">3</div></div>
+              <div class="hbar"><div class="left"><span class="pill green">AC</span></div><div class="count">3</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">CISPLATIN</span></div><div class="count">2</div></div>
+              <div class="hbar"><div class="left"><span class="pill gray">CAPECITABINE</span></div><div class="count">1</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel box">
+            <h3><i class="fa-regular fa-clock"></i> Répartition par Statut</h3>
+            <div class="hbar"><div class="left"><span class="pill blue">Scheduled</span></div><div class="count">20</div></div>
+            <div class="hbar"><div class="left"><span class="pill orange">Ongoing</span></div><div class="count">8</div></div>
+            <div class="hbar"><div class="left"><span class="pill orange">Delayed</span></div><div class="count">4</div></div>
+            <div class="hbar"><div class="left"><span class="pill green">Completed</span></div><div class="count">3</div></div>
+          </div>
+
+          <div class="panel box">
+            <h3><i class="fa-solid fa-location-dot"></i> Répartition par Phase de Traitement</h3>
+            <div class="hbar"><div class="left"><span class="pill green">Administration</span></div><div class="count">12</div></div>
+            <div class="hbar"><div class="left"><span class="pill gray">Monitoring</span></div><div class="count">10</div></div>
+            <div class="hbar"><div class="left"><span class="pill orange">Preparation</span></div><div class="count">8</div></div>
+            <div class="hbar"><div class="left"><span class="pill blue">Discharge</span></div><div class="count">5</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ===== SUB: Planning global ===== -->
+      <div id="global" class="section">
+        <div class="panel week">
+          <div class="week-head">
+            <h2><i class="fa-regular fa-calendar"></i> Planning des Cures par Fauteuil</h2>
+            <div class="week-nav">
+              <button class="iconbtn" type="button"><i class="fa-solid fa-chevron-left"></i></button>
+              <div>29 déc. - 4 janv. 2026</div>
+              <button class="iconbtn" type="button"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+
+          <div class="grid-week">
+            <div></div>
+            <div class="col-head">lun.<br><small>29 déc.</small></div>
+            <div class="col-head">mar.<br><small>30 déc.</small></div>
+            <div class="col-head">mer.<br><small>31 déc.</small></div>
+            <div class="col-head">jeu.<br><small>1 janv.</small></div>
+            <div class="col-head">ven.<br><small>2 janv.</small></div>
+            <div class="col-head">sam.<br><small>3 janv.</small></div>
+            <div class="col-head">dim.<br><small>4 janv.</small></div>
+
+            <div class="chair-label"><i class="fa-solid fa-location-dot"></i> FAUTEUIL 1</div>
+            <div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div>
+
+            <div class="chair-label"><i class="fa-solid fa-location-dot"></i> FAUTEUIL 2</div>
+            <div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div>
+
+            <div class="chair-label"><i class="fa-solid fa-location-dot"></i> FAUTEUIL 3</div>
+            <div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div>
+
+            <div class="chair-label"><i class="fa-solid fa-location-dot"></i> FAUTEUIL 4</div>
+            <div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div>
+
+            <div class="chair-label"><i class="fa-solid fa-location-dot"></i> FAUTEUIL 5</div>
+            <div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div><div class="cell">Libre</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SUB: Patients ===== -->
+      <div id="patients" class="section">
+        <div class="panel filters">
+          <h2><i class="fa-solid fa-filter"></i> Filtres et Recherche</h2>
+          <div class="frow">
+            <div class="input"><i class="fa-solid fa-magnifying-glass" style="color:var(--muted)"></i> Rechercher un patient...</div>
+            <div class="select">Tous les statuts <i class="fa-solid fa-chevron-down" style="margin-left:auto;color:var(--muted)"></i></div>
+            <div class="select">Tous les protocoles <i class="fa-solid fa-chevron-down" style="margin-left:auto;color:var(--muted)"></i></div>
+            <span class="smallpill">6 résultat(s)</span>
+          </div>
+        </div>
+
+        <div class="patients-grid">
+          <div class="pCard blue">
+            <div class="head">
+              <div>
+                <div class="nm">Gabriel Ivanovic <span class="pTag">65 ans • M</span></div>
+                <div class="sub"><b>FOLFOX</b> (Oxaliplatin + 5-FU + Leucovorin)</div>
+              </div>
+              <div class="pills">
+                <span class="pTag">scheduled</span>
+                <span class="pTag">preparation</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 09:00</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil 1</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Martin<br> Infirmière: Sophie L.</div>
+            <div style="margin-top:12px"><span class="pTag">Neuropathy (moderate)</span></div>
+          </div>
+
+          <div class="pCard purple">
+            <div class="head">
+              <div>
+                <div class="nm">Sophie Dubois <span class="pTag">58 ans • F</span></div>
+                <div class="sub"><b>FOLFIRINOX</b> (Oxaliplatin + Irinotecan + 5-FU + Leucovorin)</div>
+              </div>
+              <div class="pills">
+                <span class="pTag">delayed</span>
+                <span class="pTag">monitoring</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 10:30</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil 2</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Laurent<br> Infirmière: Jean-Pierre M.</div>
+            <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+              <span class="pTag">Diarrhée (severe)</span>
+              <span class="pTag">Fatigue (moderate)</span>
+            </div>
+          </div>
+
+          <div class="pCard green">
+            <div class="head">
+              <div>
+                <div class="nm">Ahmed Ben Salah <span class="pTag">42 ans • M</span></div>
+                <div class="sub"><b>CARBOPLATIN</b></div>
+              </div>
+              <div class="pills">
+                <span class="pTag">ongoing</span>
+                <span class="pTag">administration</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 11:00</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil 3</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Chen<br> Infirmière: Isabelle R.</div>
+            <div style="margin-top:12px"><span class="pTag">Thrombocytopenia (mild)</span></div>
+          </div>
+
+          <div class="pCard lime">
+            <div class="head">
+              <div>
+                <div class="nm">Elisabeth Moreau <span class="pTag">71 ans • F</span></div>
+                <div class="sub"><b>AC</b> (Doxorubicin + Cyclophosphamide)</div>
+              </div>
+              <div class="pills">
+                <span class="pTag">scheduled</span>
+                <span class="pTag">preparation</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 14:00</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil 4</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Rousseau<br> Infirmière: Catherine L.</div>
+            <div style="margin-top:12px"><span class="pTag">Alopecia (moderate)</span></div>
+          </div>
+
+          <div class="pCard" style="background:#f08a3c;">
+            <div class="head">
+              <div>
+                <div class="nm">Carlos Rodriguez <span class="pTag">55 ans • M</span></div>
+                <div class="sub"><b>Docetaxel</b></div>
+              </div>
+              <div class="pills">
+                <span class="pTag" style="background:rgba(239,68,68,.22);border-color:rgba(239,68,68,.28)">review</span>
+                <span class="pTag" style="background:rgba(255,255,255,.20)">follow-up</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 15:30</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil 5</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Garcia<br> Infirmière: Nathalie P.</div>
+            <div style="margin-top:12px"><span class="pTag">Fluid retention (moderate)</span></div>
+          </div>
+
+          <div class="pCard orange">
+            <div class="head">
+              <div>
+                <div class="nm">Yasmin Al-Rashid <span class="pTag dark">48 ans • F</span></div>
+                <div class="sub"><b>Paclitaxel</b></div>
+              </div>
+              <div class="pills">
+                <span class="pTag dark">completed</span>
+                <span class="pTag dark">discharge</span>
+              </div>
+            </div>
+            <div class="line"><span><i class="fa-regular fa-calendar"></i> 25 octobre 16:00</span> <span><i class="fa-solid fa-location-dot"></i> Fauteuil non assigné</span></div>
+            <div class="mini">Équipe médicale:<br> Oncologue: Dr. Khalil<br> Infirmière: Sabrina T.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SUB: Flux de travail ===== -->
+      <div id="workflow" class="section">
+        <div class="panel empty">
+          <i class="fa-solid fa-wave-square"></i>
+          <h2>Aucun flux de travail sélectionné</h2>
+          <p>Sélectionnez un patient dans l'onglet “Patients” pour voir son flux de travail.</p>
+        </div>
+      </div>
+
+      <!-- ===== SUB: Protocoles ===== -->
+      <div id="protocols" class="section">
+        <div class="proto-grid">
+          <div class="protoCard">
+            <div class="protoTop blue">
+              <div>FOLFOX (Oxaliplatin + 5-FU + Leucovorin)</div>
+              <span class="statpill">8 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> adjuvant</div>
+              <div class="row"><span class="mut">Durée par session:</span> 4h</div>
+              <div class="row"><span class="mut">Cycle:</span> 14 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2">
+                <span class="chip2">Oxaliplatin</span><span class="chip2">Leucovorin</span><span class="chip2">5-Fluorouracil</span><span class="chip2">+1 autres</span>
+              </div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2">
+                <span class="chip2">Neuropathy</span><span class="chip2">Nausea</span><span class="chip2">+2</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="protoCard">
+            <div class="protoTop purple">
+              <div>FOLFIRINOX (Oxaliplatin + Irinotecan + 5-FU + Leucovorin)</div>
+              <span class="statpill">6 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> palliative</div>
+              <div class="row"><span class="mut">Durée par session:</span> 5h</div>
+              <div class="row"><span class="mut">Cycle:</span> 14 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2">
+                <span class="chip2">Oxaliplatin</span><span class="chip2">Irinotecan</span><span class="chip2">Leucovorin</span><span class="chip2">+2 autres</span>
+              </div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2">
+                <span class="chip2">Diarrhée</span><span class="chip2">Neuropathy</span><span class="chip2">+2</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="protoCard">
+            <div class="protoTop orange">
+              <div>Paclitaxel</div>
+              <span class="statpill">5 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> curative</div>
+              <div class="row"><span class="mut">Durée par session:</span> 4h</div>
+              <div class="row"><span class="mut">Cycle:</span> 21 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2"><span class="chip2">Paclitaxel</span></div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2"><span class="chip2">Neuropathy</span><span class="chip2">Alopecia</span><span class="chip2">+1</span></div>
+            </div>
+          </div>
+
+          <div class="protoCard">
+            <div class="protoTop teal">
+              <div>CARBOPLATIN</div>
+              <span class="statpill">4 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> palliative</div>
+              <div class="row"><span class="mut">Durée par session:</span> 2h</div>
+              <div class="row"><span class="mut">Cycle:</span> 21 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2"><span class="chip2">CARBOPLATIN</span></div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2"><span class="chip2">—</span></div>
+            </div>
+          </div>
+
+          <div class="protoCard">
+            <div class="protoTop" style="background:#f08a3c;">
+              <div>Docetaxel</div>
+              <span class="statpill">3 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> curative</div>
+              <div class="row"><span class="mut">Durée par session:</span> 2h</div>
+              <div class="row"><span class="mut">Cycle:</span> 21 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2"><span class="chip2">Docetaxel</span></div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2"><span class="chip2">Neutropenia</span><span class="chip2">Fluid retention</span><span class="chip2">+1</span></div>
+            </div>
+          </div>
+
+          <div class="protoCard">
+            <div class="protoTop green">
+              <div>AC (Doxorubicin + Cyclophosphamide)</div>
+              <span class="statpill">3 patients</span>
+            </div>
+            <div class="protoBody">
+              <div class="row"><span class="mut">Catégorie:</span> adjuvant</div>
+              <div class="row"><span class="mut">Durée par session:</span> 2h</div>
+              <div class="row"><span class="mut">Cycle:</span> 21 jours</div>
+              <div class="row" style="margin-top:10px;"><b>Médicaments principaux:</b></div>
+              <div class="chips2"><span class="chip2">Doxorubicin</span><span class="chip2">Cyclophosphamide</span></div>
+              <div class="row" style="margin-top:10px;"><b>Effets secondaires courants:</b></div>
+              <div class="chips2"><span class="chip2">Cardiotoxicity</span><span class="chip2">Alopecia</span><span class="chip2">+1</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== SUB: EPI ===== -->
+      <div id="epi" class="section">
+        <div class="panel epi">
+          <h2><i class="fa-solid fa-shield-halved"></i> Vérification des EPI (Équipements de Protection Individuelle)</h2>
+          <div class="hint">Sélectionnez un patient pour vérifier et valider les EPI nécessaires avant la cure.</div>
+
+          <div class="epi-select">
+            <div class="sel">Elisabeth Moreau - AC (Doxorubicin + Cyclophosphamide) (Cycle 2/4)</div>
+            <i class="fa-solid fa-chevron-down" style="color:var(--muted)"></i>
+          </div>
+
+          <div class="panel epi-card" style="box-shadow:none; border-radius:16px;">
+            <div class="epi-top">
+              <div class="p">
+                <div><b>Elisabeth Moreau</b></div>
+                <small>Protocole: AC (Doxorubicin + Cyclophosphamide)</small>
+              </div>
+
+              <div class="epi-stats">
+                <span class="statpill red">Critiques: 0/6</span>
+                <span class="statpill">Total: 0/7</span>
+                <span class="statpill">Cycle 2/4</span>
+              </div>
+            </div>
+
+            <div class="epi-tabs" id="epiTabs">
+              <button class="active">Tous</button>
+              <button>Mains</button>
+              <button>Tête</button>
+              <button>Urgence</button>
+            </div>
+
+            <div class="epi-alert">
+              <i class="fa-solid fa-circle-exclamation" style="margin-top:2px"></i>
+              <div>
+                <div style="font-weight:1100">EPI critiques manquants</div>
+                <div style="font-weight:900; font-size:12px; margin-top:4px; color:#b91c1c;">
+                  Tous les EPI critiques doivent être vérifiés avant de commencer le traitement
+                </div>
+              </div>
+            </div>
+
+            <!-- Critiques -->
+            <div class="listbox">
+              <div class="listhead">
+                <div class="left">
+                  <span class="rtag critical">Critiques</span>
+                  <span style="color:var(--muted); font-weight:1000; font-size:12px;">0/6 vérifiés</span>
+                </div>
+                <div class="chev"><i class="fa-solid fa-chevron-up"></i></div>
+              </div>
+
+              <div class="item">
+                <div class="l">
+                  <div class="radio"></div>
+                  <div>
+                    <div class="name">Gants en nitrile (doubles) <span class="rtag req">Obligatoire</span></div>
+                    <div class="sub">Protection contre les agents cytotoxiques</div>
+                    <div class="sub"><small><i class="fa-regular fa-clock"></i> continuous &nbsp; <i class="fa-solid fa-rotate"></i> Remplacement: 30 minutes</small></div>
+                    <div class="note">
+                      <b>Instructions:</b><br>
+                      Porter deux paires de gants en nitrile, changer toutes les 30 minutes
+                      <div style="margin-top:8px;color:#b45309;font-weight:1000">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Changement toutes les 30 minutes obligatoire
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="righttags">
+                  <span class="rtag critical"><i class="fa-regular fa-circle-check"></i> critical</span>
+                </div>
+              </div>
+
+              <div class="item">
+                <div class="l">
+                  <div class="radio"></div>
+                  <div>
+                    <div class="name">Blouse de protection cytotoxique <span class="rtag req">Obligatoire</span></div>
+                    <div class="sub">Protection du personnel et du patient contre contamination</div>
+                    <div class="sub"><small><i class="fa-regular fa-clock"></i> continuous &nbsp; <i class="fa-solid fa-rotate"></i> Remplacement: Après chaque utilisation</small></div>
+                  </div>
+                </div>
+                <div class="righttags">
+                  <span class="rtag critical"><i class="fa-regular fa-circle-check"></i> critical</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Urgence / Haute priorité -->
+            <div class="listbox" style="margin-top:14px;">
+              <div class="listhead">
+                <div class="left">
+                  <span class="rtag high">Haute priorité</span>
+                  <span style="color:var(--muted); font-weight:1000; font-size:12px;">0/1 vérifiés</span>
+                </div>
+                <div class="chev"><i class="fa-solid fa-chevron-up"></i></div>
+              </div>
+
+              <div class="item">
+                <div class="l">
+                  <div class="radio"></div>
+                  <div>
+                    <div class="name">Casque réfrigérant</div>
+                    <div class="sub">Prévention de l’alopécie chimio-induite</div>
+                    <div class="sub"><small><i class="fa-regular fa-clock"></i> during-treatment &nbsp; <i class="fa-solid fa-rotate"></i> Remplacement: Vérifier température avant chaque utilisation</small></div>
+                    <div class="note">
+                      <b>Instructions:</b><br>
+                      Application 30 min avant, pendant et 90 min après la chimiothérapie
+                    </div>
+                  </div>
+                </div>
+                <div class="righttags">
+                  <span class="rtag high"><i class="fa-solid fa-bolt"></i> high</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="epi-actions">
+              <button class="btn primary" type="button">
+                <i class="fa-regular fa-circle-check"></i> Valider la vérification EPI
+              </button>
+              <button class="btn ghost" type="button">
+                <i class="fa-solid fa-list"></i> Catalogue EPI
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============ Placeholder sections (si tu veux plus tard) ============ -->
+    <section id="planning" class="section">
+      <div class="panel empty">
+        <i class="fa-solid fa-wave-square"></i>
+        <h2>Planning Quotidien</h2>
+        <p>Ici tu peux coller ton planning quotidien (celui que tu as déjà fait) si tu veux.</p>
+      </div>
+    </section>
+
+    <section id="prog" class="section">
+      <div class="panel empty">
+        <i class="fa-regular fa-calendar"></i>
+        <h2>Programmation</h2>
+        <p>Section à compléter si besoin.</p>
+      </div>
+    </section>
+
+    <section id="nurse" class="section">
+      <div class="panel empty">
+        <i class="fa-solid fa-user-nurse"></i>
+        <h2>Planning Infirmier</h2>
+        <p>Section à compléter si besoin.</p>
+      </div>
+    </section>
+
+    <section id="newp" class="section">
+      <div class="panel empty">
+        <i class="fa-solid fa-user-plus"></i>
+        <h2>Nouveau Patient</h2>
+        <p>Section à compléter si besoin.</p>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // MAIN NAV
+    const mainNav = document.getElementById("mainNav");
+    const mainSections = [...document.querySelectorAll("section.section")];
+
+    mainNav.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-section]");
+      if(!a) return;
+      e.preventDefault();
+
+      // active link
+      [...mainNav.querySelectorAll("a")].forEach(x => x.classList.toggle("active", x === a));
+
+      // show/hide sections
+      const id = a.dataset.section;
+      mainSections.forEach(s => s.classList.toggle("active", s.id === id));
+
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    // SUBTABS (inside dashboard)
+    const subtabs = document.getElementById("subtabs");
+    const subSections = ["sessions","overview","global","patients","workflow","protocols","epi"].map(id => document.getElementById(id));
+
+    subtabs.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-sub]");
+      if(!btn) return;
+
+      [...subtabs.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+      const id = btn.dataset.sub;
+
+      subSections.forEach(s => s.classList.toggle("active", s.id === id));
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+
+    // EPI tabs UI only
+    const epiTabs = document.getElementById("epiTabs");
+    if(epiTabs){
+      epiTabs.addEventListener("click", (e) => {
+        const btn = e.target.closest("button");
+        if(!btn) return;
+        [...epiTabs.querySelectorAll("button")].forEach(b => b.classList.toggle("active", b === btn));
+      });
+    }
+  </script>
+</body>
+</html>
