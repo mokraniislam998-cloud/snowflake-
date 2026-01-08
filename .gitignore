@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# ML models / big binaries
+*.pth
+*.pt
+*.onnx
+
+# Optional: local artifacts
+*.pdf
+*.zip
+*.tar
+*.tar.gz

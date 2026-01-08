@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Planning Quotidien - Planification des Cures</title>
+
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e5e7eb;
+      --shadow: 0 12px 30px rgba(15, 23, 42, .10);
+      --radius: 16px;
+
+      --primary:#355f8e;          /* bleu gris menu */
+      --primary2:#2f6fed;         /* accent bleu */
+      --green:#22c55e;
+      --orange:#f59e0b;
+      --red:#ef4444;
+
+      --chip:#eef2f6;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background: var(--bg);
+    }
+
+    .wrap{
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 22px 50px;
+    }
+
+    /* ===== Header top (titre centré + date droite) ===== */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      padding: 6px 0 10px;
+    }
+    .topbar .title{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 10px;
+      flex: 1;
+      font-weight: 900;
+      font-size: 20px;
+      color:#1f7fbf;
+    }
+    .topbar .title i{ color:#1f7fbf; }
+    .topbar .date{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+
+    /* ===== Nav ===== */
+    .nav{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin: 8px 0 18px;
+    }
+    .nav a{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      transition: .15s background, .15s color, .15s box-shadow;
+    }
+    .nav a:hover{
+      background:#fff;
+      box-shadow: 0 10px 18px rgba(15,23,42,.06);
+      color: var(--text);
+    }
+    .nav a.active{
+      background: var(--primary);
+      color:#fff;
+      box-shadow: 0 10px 18px rgba(53,95,142,.18);
+    }
+
+    /* ===== Main layout ===== */
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      align-items:start;
+    }
+
+    .panel{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* ===== Schedule grid panel ===== */
+    .grid-panel{ padding: 16px; }
+
+    .grid-head{
+      display:grid;
+      grid-template-columns: 90px repeat(5, 1fr);
+      gap: 14px;
+      align-items:end;
+      margin-bottom: 10px;
+    }
+    .grid-head .h{
+      font-weight: 900;
+      color:#0f172a;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing:.4px;
+    }
+    .grid-head .mut{ color: var(--muted); font-weight: 900; font-size: 12px; }
+
+    .rows{ display:grid; gap: 14px; }
+    .row{
+      display:grid;
+      grid-template-columns: 90px repeat(5, 1fr);
+      gap: 14px;
+      align-items:stretch;
+    }
+    .time{
+      color: #64748b;
+      font-weight: 900;
+      font-size: 12px;
+      padding-top: 10px;
+    }
+
+    .slot{
+      border:1px dashed #e2e8f0;
+      border-radius: 14px;
+      height: 132px;
+      background:#fafafa;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#94a3b8;
+      font-weight: 900;
+      font-size: 12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* ===== Cards ===== */
+    .card{
+      border-radius: 14px;
+      padding: 14px;
+      height: 132px;
+      color:#fff;
+      position:relative;
+      cursor:pointer;
+      border: 2px solid transparent;
+      box-shadow: 0 10px 20px rgba(15,23,42,.10);
+    }
+    .card.blue{ background:#2f86d9; }
+    .card.purple{ background:#6a4be3; }
+    .card.green{ background:#1fd6a7; }
+    .card.orange{ background:#f7b44c; color:#1f2937; }
+
+    .card .top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .card .proto{
+      font-weight: 1000;
+      font-size: 14px;
+      letter-spacing:.2px;
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+    .card .meta{ font-weight: 800; font-size: 12px; opacity:.95; margin-top: 4px; }
+    .card .small{ font-weight: 800; font-size: 11px; opacity:.9; margin-top: 2px; }
+
+    .card .dur{
+      position:absolute;
+      bottom: 12px;
+      left: 14px;
+      font-weight: 1000;
+      font-size: 13px;
+      opacity:.95;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1000;
+      font-size: 11px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.25);
+      white-space:nowrap;
+    }
+    .pill.orange{
+      background: rgba(245,158,11,.22);
+      border-color: rgba(245,158,11,.3);
+    }
+    .pill.red{
+      background: rgba(239,68,68,.22);
+      border-color: rgba(239,68,68,.3);
+    }
+
+    .tag-mini{
+      position:absolute;
+      bottom: 10px;
+      right: 12px;
+      display:flex;
+      gap: 6px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .tag{
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-weight: 1000;
+      font-size: 11px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.25);
+    }
+
+    /* ===== Right sidebar ===== */
+    .side{ display:flex; flex-direction:column; gap: 14px; }
+    .side-card{ padding: 14px; }
+
+    .side-title{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 1000;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .side-item{
+      border:1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background:#fff;
+      display:flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .bar-blue{ width: 4px; border-radius: 999px; background:#2f6fed; }
+    .si-name{ font-weight: 1000; font-size: 12px; }
+    .si-sub{ color: var(--muted); font-weight: 800; font-size: 11px; margin-top: 2px;}
+    .si-sub2{ color: var(--muted); font-weight: 800; font-size: 11px; margin-top: 6px;}
+
+    .nf-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-weight: 900;
+      font-size: 12px;
+      color:#0f172a;
+    }
+    .nf-row:last-child{ border-bottom:none; }
+    .nf-sub{ color: var(--muted); font-weight: 800; font-size: 11px; text-align:right; }
+
+    .timeline-legend{
+      margin-top: 10px;
+      display:grid;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 900;
+      color:#0f172a;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;display:inline-block;margin-right:8px;
+    }
+    .dot.blue{ background:#2f86d9; }
+    .dot.orange{ background:#f59e0b; }
+    .dot.green{ background:#22c55e; }
+
+    .chips{
+      margin-top: 10px;
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-weight: 1000;
+      font-size: 11px;
+      color:#fff;
+    }
+    .chip.red{ background:#ef4444; }
+    .chip.green{ background:#22c55e; }
+    .chip.orange{ background:#f59e0b; }
+
+    .clickable{
+      cursor:pointer;
+      transition:.15s transform, .15s box-shadow;
+    }
+    .clickable:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(15,23,42,.10);
+    }
+
+    /* ===== Timeline view ===== */
+    .timeline-view{ display:none; }
+    .timeline-view.active{ display:block; }
+
+    .timeline-top{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    .tl-title{ font-weight: 1000; font-size: 18px; }
+    .tl-pills{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+      margin-top: 8px;
+    }
+    .pill-lite{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1000;
+      font-size: 11px;
+      color:#0f172a;
+    }
+    .filter{ display:flex; align-items:center; gap: 10px; }
+    .select{
+      border:1px solid var(--line);
+      border-radius: 10px;
+      background:#fff;
+      padding: 10px 12px;
+      font-weight: 900;
+      color:#0f172a;
+      cursor:pointer;
+    }
+
+    .progress-card{
+      padding: 14px;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
+      box-shadow: 0 10px 20px rgba(15,23,42,.05);
+    }
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:center;
+      font-weight: 1000;
+      margin-bottom: 10px;
+    }
+    .progress{
+      height: 10px;
+      border-radius: 999px;
+      background:#eef2f6;
+      overflow:hidden;
+    }
+    .progress > div{
+      height:100%;
+      width: 75%;
+      background:#355f8e;
+      border-radius: 999px;
+    }
+    .progress-labels{
+      display:flex;
+      justify-content:space-between;
+      font-weight: 900;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .progress-mid{
+      text-align:center;
+      margin-top: -18px;
+      font-weight: 900;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .tl-tabs{
+      margin-top: 14px;
+      background:#f1f5f9;
+      border-radius: 14px;
+      padding: 8px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .tl-tab{
+      border:none;
+      border-radius: 12px;
+      padding: 12px;
+      font-weight: 1000;
+      cursor:pointer;
+      color: var(--muted);
+      background:transparent;
+    }
+    .tl-tab.active{
+      background:#fff;
+      color:#0f172a;
+      box-shadow: 0 10px 18px rgba(15,23,42,.06);
+      border:1px solid var(--line);
+    }
+
+    /* ==== TIMELINE (améliorée comme screenshot) ==== */
+    .tl-list{
+      margin-top: 14px;
+      display:grid;
+      gap: 16px;
+      position:relative;
+      padding-left: 44px; /* colonne icônes */
+    }
+    .tl-line{
+      position:absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background:#e2e8f0;
+      border-radius: 999px;
+    }
+
+    .marker{
+      position:absolute;
+      left: 10px;
+      top: 18px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 10px;
+      z-index: 2;
+    }
+    .marker.ok{
+      background:#22c55e;
+      color:#fff;
+      box-shadow: 0 10px 18px rgba(15,23,42,.10);
+      border: 3px solid #fff;
+    }
+    .marker.dot{
+      width: 14px;
+      height: 14px;
+      left: 12px;
+      background:#cbd5e1;
+      border: 3px solid #fff;
+      box-shadow: 0 10px 18px rgba(15,23,42,.08);
+    }
+
+    .tl-item{
+      position:relative;
+      border:1px solid var(--line);
+      border-radius: 14px;
+      background:#fff;
+      padding: 16px;
+      box-shadow: 0 10px 20px rgba(15,23,42,.05);
+    }
+
+    .tl-item .tl-item-head{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-weight: 1000;
+      font-size: 14px;
+    }
+
+    .state{
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 1000;
+      font-size: 11px;
+      color:#fff;
+      background: #22c55e; /* terminée */
+    }
+    .state.blue{ background:#2f6fed; }
+
+    .tl-proto{
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .tl-meta{
+      margin-top: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      color:#0f172a;
+      font-weight: 900;
+      font-size: 12px;
+    }
+    .tl-meta .m{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+    }
+    .tl-meta i{ color:#64748b; }
+
+    .tl-item.current{
+      border-color:#2f6fed;
+      box-shadow: 0 14px 26px rgba(47,111,237,.14);
+    }
+
+    .big-summary{
+      margin-top: 18px;
+      border-radius: 16px;
+      background:#f1f5f9;
+      border:1px solid #e2e8f0;
+      padding: 18px 14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      text-align:center;
+    }
+    .big-summary .n{
+      font-weight: 1100;
+      font-size: 26px;
+      line-height:1;
+    }
+    .big-summary .l{
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 11px;
+    }
+    .big-summary .g{ color:#22c55e; }
+    .big-summary .b{ color:#2f6fed; }
+    .big-summary .s{ color:#334155; }
+
+    /* responsive */
+    @media (max-width: 1100px){
+      .layout{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px){
+      .grid-head, .row{ grid-template-columns: 70px repeat(5, 1fr); }
+      .nav{ justify-content:flex-start; }
+      .topbar .title{ justify-content:flex-start; }
+    }
+    @media (max-width: 760px){
+      .grid-head, .row{ grid-template-columns: 70px repeat(2, 1fr); }
+      .grid-head .h:nth-child(n+4),
+      .row > :nth-child(n+4){ display:none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- top line -->
+    <div class="topbar">
+      <div style="width:180px"></div>
+      <div class="title"><i class="fa-solid fa-wave-square"></i> Planification des Cures</div>
+      <div class="date"><i class="fa-regular fa-calendar"></i> mardi 30 décembre 2025</div>
+    </div>
+
+    <!-- nav -->
+    <nav class="nav">
+      <a href="#"><i class="fa-solid fa-gear"></i> Tableau de Bord</a>
+      <a class="active" href="#"><i class="fa-solid fa-wave-square"></i> Planning Quotidien</a>
+      <a href="#"><i class="fa-regular fa-calendar"></i> Programmation</a>
+      <a href="#"><i class="fa-solid fa-users"></i> Planning Infirmier</a>
+      <a href="#"><i class="fa-solid fa-user-plus"></i> Nouveau Patient</a>
+    </nav>
+
+    <!-- ===== VIEW 1 : GRID ===== -->
+    <div id="viewGrid">
+      <div class="layout">
+        <!-- schedule -->
+        <section class="panel grid-panel">
+          <div class="grid-head">
+            <div class="mut">Horaire</div>
+            <div class="h">FAUTEUIL 1</div>
+            <div class="h">FAUTEUIL 2</div>
+            <div class="h">FAUTEUIL 3</div>
+            <div class="h">FAUTEUIL 4</div>
+            <div class="h">FAUTEUIL 5</div>
+          </div>
+
+          <div class="rows">
+            <!-- 09:00 -->
+            <div class="row">
+              <div class="time">09:00</div>
+
+              <div class="card blue clickable" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFOX">
+                <div class="top">
+                  <div>
+                    <div class="proto">FOLFOX</div>
+                    <div class="meta">Cure 4 of 12</div>
+                    <div class="small">every 2 weeks</div>
+                  </div>
+                  <span class="pill"><span class="dot blue"></span> scheduled</span>
+                </div>
+                <div class="dur">4 hours</div>
+              </div>
+
+              <div class="card purple clickable" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFIRINOX">
+                <div class="top">
+                  <div>
+                    <div class="proto">FOLFIRINOX</div>
+                    <div class="meta">Cure 8 of 12</div>
+                    <div class="small">every 5 weeks</div>
+                  </div>
+                  <span class="pill orange"><i class="fa-solid fa-triangle-exclamation"></i> delayed</span>
+                </div>
+                <div class="dur">5 hours</div>
+              </div>
+
+              <div class="card purple clickable" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFIRINOX">
+                <div class="top">
+                  <div>
+                    <div class="proto">FOLFIRINOX</div>
+                    <div class="meta">Cure 8 of 12</div>
+                    <div class="small">Neuropathy</div>
+                  </div>
+                  <span class="pill orange"><i class="fa-solid fa-triangle-exclamation"></i> delayed</span>
+                </div>
+                <div class="tag-mini">
+                  <span class="tag">Neuropathy</span>
+                </div>
+                <div class="dur">4 hours</div>
+              </div>
+
+              <div class="card blue clickable" style="border-color:#ef4444" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFOX">
+                <div class="top">
+                  <div>
+                    <div class="proto">FOLFOX</div>
+                    <div class="meta">Cure 4 of 12</div>
+                    <div class="small">Nausea</div>
+                  </div>
+                  <span class="pill red"><i class="fa-solid fa-triangle-exclamation"></i> review</span>
+                </div>
+                <div class="tag-mini">
+                  <span class="tag">Nausea</span>
+                </div>
+                <div class="dur">4 hours</div>
+              </div>
+
+              <div class="slot">Disponible</div>
+            </div>
+
+            <!-- 10:00 -->
+            <div class="row">
+              <div class="time">10:00</div>
+
+              <div class="card green clickable" data-open-timeline="1" data-patient="Brian R." data-proto="CarboVP">
+                <div class="top">
+                  <div>
+                    <div class="proto">CarboVP</div>
+                    <div class="meta">16</div>
+                    <div class="small">Cure 3 of 12</div>
+                    <div class="small">Postponed</div>
+                  </div>
+                  <span class="pill"><span class="dot blue"></span> scheduled</span>
+                </div>
+                <div class="dur">5 hours</div>
+              </div>
+
+              <div class="card green clickable" data-open-timeline="1" data-patient="Brian R." data-proto="CarboVP">
+                <div class="top">
+                  <div>
+                    <div class="proto">CarboVP</div>
+                    <div class="meta">16</div>
+                    <div class="small">Cure 9 of 12</div>
+                    <div class="small">Televeed</div>
+                  </div>
+                  <span class="pill" style="background:rgba(34,197,94,.22);border-color:rgba(34,197,94,.3)">
+                    <i class="fa-regular fa-circle-check"></i> completed
+                  </span>
+                </div>
+                <div class="dur">5 hours</div>
+              </div>
+
+              <div class="card green clickable" data-open-timeline="1" data-patient="Brian R." data-proto="CarboVP">
+                <div class="top">
+                  <div>
+                    <div class="proto">CarboVP</div>
+                    <div class="meta">16</div>
+                    <div class="small">Cure 6 of 12</div>
+                    <div class="small">Schedule</div>
+                  </div>
+                  <span class="pill orange"><i class="fa-solid fa-triangle-exclamation"></i> delayed</span>
+                </div>
+                <div class="dur">5 hours</div>
+              </div>
+
+              <div class="card green clickable" data-open-timeline="1" data-patient="Brian R." data-proto="CarboVP">
+                <div class="top">
+                  <div>
+                    <div class="proto">CarboVP</div>
+                    <div class="meta">16</div>
+                    <div class="small">Cure 4 of 12</div>
+                    <div class="small">Tup week</div>
+                  </div>
+                  <span class="pill" style="background:rgba(245,158,11,.22);border-color:rgba(245,158,11,.3)">
+                    <i class="fa-solid fa-circle-notch"></i> ongoing
+                  </span>
+                </div>
+                <div class="dur">5 hours</div>
+              </div>
+
+              <div class="slot">Disponible</div>
+            </div>
+
+            <!-- 11:00 -->
+            <div class="row">
+              <div class="time">11:00</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+            </div>
+
+            <!-- 12:00 -->
+            <div class="row">
+              <div class="time">12:00</div>
+
+              <div class="card orange clickable" data-open-timeline="1" data-patient="Emma L." data-proto="Taxol">
+                <div class="top">
+                  <div>
+                    <div class="proto">Taxol hebdo</div>
+                    <div class="meta">Cure 6 of 12</div>
+                    <div class="small">Terminal</div>
+                  </div>
+                  <span class="pill orange"><i class="fa-solid fa-triangle-exclamation"></i> delayed</span>
+                </div>
+                <div class="dur">4 hours</div>
+              </div>
+
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+            </div>
+
+            <!-- 13:00 -->
+            <div class="row">
+              <div class="time">13:00</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+              <div class="slot">Disponible</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- right sidebar -->
+        <aside class="side">
+          <section class="panel side-card">
+            <div class="side-title"><i class="fa-regular fa-calendar"></i> Planning patient</div>
+
+            <div class="side-item clickable" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFIRINOX">
+              <div class="bar-blue"></div>
+              <div>
+                <div class="si-name">Emma L.</div>
+                <div class="si-sub">FOLFIRINOX</div>
+                <div class="si-sub2">Cure 9 &nbsp; 11/10/2024 08:00</div>
+              </div>
+            </div>
+
+            <div class="side-item clickable" data-open-timeline="1" data-patient="Emma L." data-proto="FOLFIRINOX">
+              <div class="bar-blue"></div>
+              <div>
+                <div class="si-name">Emma L.</div>
+                <div class="si-sub">FOLFIRINOX</div>
+                <div class="si-sub2">Cure 10 &nbsp; 25/10/2024 08:00</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel side-card">
+            <div class="side-title"><i class="fa-solid fa-user-nurse"></i> Nurse follow-up</div>
+
+            <div class="nf-row">
+              <div>Anne K.</div>
+              <div class="nf-sub">2 patients</div>
+            </div>
+            <div class="nf-row">
+              <div>Julie G.</div>
+              <div class="nf-sub">Available</div>
+            </div>
+            <div class="nf-row">
+              <div>Clara P.</div>
+              <div class="nf-sub">5 Scheduled</div>
+            </div>
+
+            <div style="margin-top:10px; height: 10px; border-radius: 999px; background:#e2e8f0; overflow:hidden;">
+              <div style="height:100%; width:60%; background:#1fd6a7;"></div>
+            </div>
+            <div style="margin-top:8px; color:var(--muted); font-weight:900; font-size:11px;">Scheduled</div>
+          </section>
+
+          <section class="panel side-card clickable" id="openTimelineCard">
+            <div class="side-title"><i class="fa-regular fa-clock"></i> Patient cure timeline</div>
+
+            <div class="timeline-legend">
+              <div><span class="dot blue"></span> FOLFOX</div>
+              <div><span class="dot orange"></span> Taxol</div>
+              <div><span class="dot green"></span> EC</div>
+            </div>
+
+            <div class="chips">
+              <span class="chip red">To review</span>
+              <span class="chip green">Postponed</span>
+              <span class="chip orange">Delayed</span>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ===== VIEW 2 : TIMELINE (Emma L.) ===== -->
+    <div id="viewTimeline" class="timeline-view">
+      <section class="panel" style="padding:16px;">
+        <div class="timeline-top">
+          <div>
+            <div class="tl-title">Timeline des cures - <span id="tlPatient">Emma L.</span></div>
+            <div class="tl-pills">
+              <span class="pill-lite" id="tlProto">FOLFIRINOX</span>
+              <span class="pill-lite">9/12 cures</span>
+            </div>
+          </div>
+
+          <div class="filter">
+            <div class="select"><i class="fa-solid fa-filter"></i> &nbsp; Toutes &nbsp; <i class="fa-solid fa-chevron-down"></i></div>
+            <button id="backToGrid" class="select" type="button" title="Retour">
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="progress-card">
+          <div class="progress-head">
+            <div style="display:flex;align-items:center;gap:10px;font-weight:1000">
+              <i class="fa-solid fa-arrow-trend-up" style="color:#2f6fed"></i>
+              Progression du traitement
+            </div>
+            <div style="font-weight:1000;font-size:22px;color:#355f8e">75%</div>
+          </div>
+
+          <div class="progress"><div></div></div>
+          <div class="progress-labels">
+            <div>Cure 1</div>
+            <div>Cure 12</div>
+          </div>
+          <div class="progress-mid">Actuelle: 9</div>
+        </div>
+
+        <div class="tl-tabs">
+          <button class="tl-tab" data-mode="compact">Compact</button>
+          <button class="tl-tab active" data-mode="detail">Détaillé</button>
+          <button class="tl-tab" data-mode="calendar">Calendrier</button>
+        </div>
+
+        <div class="tl-list">
+          <div class="tl-line"></div>
+
+          <div class="tl-item">
+            <div class="marker ok"><i class="fa-solid fa-check"></i></div>
+            <div class="tl-item-head">Cure 3 <span class="state">Terminée</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 15/09/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="marker ok"><i class="fa-solid fa-check"></i></div>
+            <div class="tl-item-head">Cure 4 <span class="state">Terminée</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 29/09/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="marker ok"><i class="fa-solid fa-check"></i></div>
+            <div class="tl-item-head">Cure 5 <span class="state">Terminée</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 13/10/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="marker ok"><i class="fa-solid fa-check"></i></div>
+            <div class="tl-item-head">Cure 6 <span class="state">Terminée</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 27/10/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <div class="tl-item">
+            <div class="marker ok"><i class="fa-solid fa-check"></i></div>
+            <div class="tl-item-head">Cure 7 <span class="state">Terminée</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 10/11/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <div class="tl-item current">
+            <div class="marker" style="background:#2f6fed;color:#fff;border:3px solid #fff;box-shadow:0 10px 18px rgba(15,23,42,.10)">
+              <i class="fa-solid fa-circle"></i>
+            </div>
+            <div class="tl-item-head">Cure 9 <span class="state blue">En cours</span></div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 08/12/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+
+          <!-- séparateur (point gris) -->
+          <div class="tl-item" style="border-color:transparent; box-shadow:none; background:transparent; padding:0; height:0;">
+            <div class="marker dot"></div>
+          </div>
+
+          <div class="tl-item">
+            <div class="tl-item-head">Cure 10</div>
+            <div class="tl-proto">FOLFIRINOX</div>
+            <div class="tl-meta">
+              <div class="m"><i class="fa-regular fa-calendar"></i> 22/12/2024</div>
+              <div class="m"><i class="fa-regular fa-clock"></i> 08:00</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="big-summary">
+          <div>
+            <div class="n g">8</div>
+            <div class="l">Terminées</div>
+          </div>
+          <div>
+            <div class="n b">1</div>
+            <div class="l">En cours</div>
+          </div>
+          <div>
+            <div class="n s">3</div>
+            <div class="l">Restantes</div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const viewGrid = document.getElementById("viewGrid");
+    const viewTimeline = document.getElementById("viewTimeline");
+    const tlPatient = document.getElementById("tlPatient");
+    const tlProto = document.getElementById("tlProto");
+    const backToGrid = document.getElementById("backToGrid");
+
+    function openTimeline(patient, proto){
+      tlPatient.textContent = patient || "Emma L.";
+      tlProto.textContent = proto || "FOLFIRINOX";
+      viewGrid.style.display = "none";
+      viewTimeline.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function closeTimeline(){
+      viewTimeline.classList.remove("active");
+      viewGrid.style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("click", (e) => {
+      const target = e.target.closest("[data-open-timeline='1']");
+      if(target){
+        openTimeline(target.dataset.patient, target.dataset.proto);
+      }
+    });
+
+    document.getElementById("openTimelineCard").addEventListener("click", () => {
+      openTimeline("Emma L.", "FOLFIRINOX");
+    });
+
+    backToGrid.addEventListener("click", closeTimeline);
+
+    const tlTabs = [...document.querySelectorAll(".tl-tab")];
+    tlTabs.forEach(btn => btn.addEventListener("click", () => {
+      tlTabs.forEach(b => b.classList.toggle("active", b === btn));
+    }));
+  </script>
+</body>
+</html>

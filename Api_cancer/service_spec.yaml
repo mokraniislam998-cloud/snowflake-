@@ -1,0 +1,11 @@
+spec:
+  containers:
+  - name: api
+    image: /DB_CANCER_ISLAM/PUBLIC/CANCER_REPO/cancer_api:1.0
+    readinessProbe:
+      port: 8000
+      path: /
+  endpoints:
+  - name: http
+    port: 8000
+    public: true

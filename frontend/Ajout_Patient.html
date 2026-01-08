@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Inscription d'un nouveau patient</title>
+  <link rel="stylesheet" href="./css/Ajout_patient.css">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+  <header class="topbar">
+  <div class="topbar-inner">
+
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">
+        <i class="fa-solid fa-wave-square"></i>
+      </div>
+      <div class="brand-title">Onboarding Patient</div>
+    </div>
+
+    <nav class="menu" aria-label="Navigation principale">
+      <a class="menu-item" href="#">
+        <i class="fa-solid fa-gear"></i>
+        <span>Tableau de Bord</span>
+      </a>
+      <a class="menu-item" href="#">
+        <i class="fa-solid fa-wave-square"></i>
+        <span>Planning Quotidien</span>
+      </a>
+      <a class="menu-item" href="#">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Programmation</span>
+      </a>
+      <a class="menu-item" href="#">
+        <i class="fa-regular fa-user"></i>
+        <span>Planning Infirmier</span>
+      </a>
+
+      <a class="menu-item btn-pill active" href="#">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Nouveau Patient</span>
+      </a>
+    </nav>
+
+    <div class="topbar-right">
+      <a class="mini-link" href="#">
+        <i class="fa-solid fa-user-plus"></i>
+        <span>Nouveau patient</span>
+      </a>
+    </div>
+
+  </div>
+</header>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="title-row">
+          <div class="badge-icon"><i class="fa-regular fa-user"></i></div>
+          <div>Inscription d'un nouveau patient</div>
+        </div>
+
+        <div class="progress-row">
+          <div>Étape <strong id="stepText">1</strong> sur 5</div>
+          <div><strong id="percentText">20%</strong> complété</div>
+        </div>
+
+        <div class="progressbar"><span id="bar" style="width:20%"></span></div>
+      </div>
+
+      <div class="stepper">
+        <div class="step active" data-step="1">
+          <div class="circle"><i class="fa-regular fa-user"></i></div>
+          <div class="label">Informations<br>Personnelles</div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="circle"><i class="fa-regular fa-heart"></i></div>
+          <div class="label">Informations<br>Médicales</div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="circle"><i class="fa-solid fa-phone"></i></div>
+          <div class="label">Contact<br>d'Urgence</div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="circle"><i class="fa-regular fa-file-lines"></i></div>
+          <div class="label">Préférences</div>
+        </div>
+        <div class="step" data-step="5">
+          <div class="circle"><i class="fa-regular fa-circle-check"></i></div>
+          <div class="label">Validation</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <form id="wizardForm">
+
+          <!-- Étape 1 -->
+          <section class="step-section active" data-section="1">
+            <div class="grid">
+              <div class="field full">
+                <label>Numéro d'identification patient (NIP) <span class="req">*</span></label>
+                <input name="nip" type="text" placeholder="ex: NIP2024001" required />
+              </div>
+
+              <div class="field">
+                <label>Prénom <span class="req">*</span></label>
+                <input name="prenom" type="text" placeholder="Prénom du patient" required />
+              </div>
+
+              <div class="field">
+                <label>Nom <span class="req">*</span></label>
+                <input name="nom" type="text" placeholder="Nom du patient" required />
+              </div>
+
+              <div class="field">
+                <label>Date de naissance <span class="req">*</span></label>
+                <div class="icon-input">
+                  <i class="fa-regular fa-calendar"></i>
+                  <input name="dob" type="date" required />
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Genre <span class="req">*</span></label>
+                <select name="genre" required>
+                  <option value="" selected disabled>Sélectionner le genre</option>
+                  <option value="female">Femme</option>
+                  <option value="male">Homme</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Téléphone <span class="req">*</span></label>
+                <input name="telephone" type="tel" placeholder="+33 1 23 45 67 89" required />
+              </div>
+
+              <div class="field">
+                <label>Email</label>
+                <input name="email" type="email" placeholder="patient@email.com" />
+              </div>
+
+              <div class="field full">
+                <label>Adresse</label>
+                <input name="adresse" type="text" placeholder="123 Rue de la Paix" />
+              </div>
+
+              <div class="field">
+                <label>Ville</label>
+                <input name="ville" type="text" placeholder="Paris" />
+              </div>
+
+              <div class="field">
+                <label>Code postal</label>
+                <input name="cp" type="text" inputmode="numeric" placeholder="75001" />
+              </div>
+            </div>
+          </section>
+
+          <!-- Étape 2 -->
+          <section class="step-section" data-section="2">
+            <div class="grid">
+              <div class="field">
+                <label>Diagnostic <span class="req">*</span></label>
+                <input name="diagnostic" type="text" placeholder="ex: Cancer colorectal" required />
+              </div>
+
+              <div class="field">
+                <label>Stade</label>
+                <input name="stade" type="text" placeholder="ex: T3N1M0" />
+              </div>
+
+              <div class="field full">
+                <label>Oncologue référent</label>
+                <input name="oncologue" type="text" placeholder="Dr. Martin" />
+              </div>
+
+              <div class="field full">
+                <label>Traitements antérieurs</label>
+                <textarea name="traitements" placeholder="Décrivez les traitements déjà reçus..."></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Allergies connues</label>
+                <textarea name="allergies" placeholder="Allergies médicamenteuses, alimentaires..."></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Médicaments actuels</label>
+                <textarea name="medicaments" placeholder="Liste des médicaments en cours..."></textarea>
+              </div>
+
+              <div class="field full">
+                <label>Antécédents médicaux</label>
+                <textarea name="antecedents" placeholder="Autres pathologies, interventions chirurgicales..."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Étape 3 -->
+          <section class="step-section" data-section="3">
+            <div class="grid">
+              <div class="field">
+                <label>Nom du contact <span class="req">*</span></label>
+                <input name="urgent_nom" type="text" placeholder="Nom du contact" required />
+              </div>
+
+              <div class="field">
+                <label>Relation <span class="req">*</span></label>
+                <select name="urgent_relation" required>
+                  <option value="" selected disabled>Type de relation</option>
+                  <option value="spouse">Conjoint(e)</option>
+                  <option value="parent">Parent</option>
+                  <option value="child">Enfant</option>
+                  <option value="sibling">Frère/Sœur</option>
+                  <option value="friend">Ami(e)</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Téléphone <span class="req">*</span></label>
+                <input name="urgent_tel" type="tel" placeholder="+33..." required />
+              </div>
+
+              <div class="field">
+                <label>Email</label>
+                <input name="urgent_email" type="email" placeholder="contact@email.com" />
+              </div>
+            </div>
+          </section>
+
+          <!-- Étape 4 -->
+          <section class="step-section" data-section="4">
+            <div class="grid">
+              <div class="field full">
+                <label>Langue préférée</label>
+                <select name="langue">
+                  <option value="fr" selected>Français</option>
+                  <option value="en">English</option>
+                  <option value="ar">العربية</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label>Préférences de communication</label>
+                <div class="chips" id="comChips">
+                  <span class="chip" data-value="sms">SMS</span>
+                  <span class="chip" data-value="email">Email</span>
+                  <span class="chip" data-value="phone">Appel téléphonique</span>
+                  <span class="chip" data-value="mail">Courrier</span>
+                </div>
+                <!-- stocke les choix -->
+                <input type="hidden" name="communication" value="" />
+              </div>
+
+              <div class="field full">
+                <label>Notes supplémentaires</label>
+                <textarea name="notes" placeholder="Informations supplémentaires, besoins spéciaux..."></textarea>
+              </div>
+            </div>
+          </section>
+
+          <!-- Étape 5 -->
+          <section class="step-section" data-section="5">
+            <div class="summary">
+              <div class="summary-title">
+                <div class="ok"><i class="fa-solid fa-check"></i></div>
+                <div>Récapitulatif des informations</div>
+              </div>
+
+              <div class="summary-grid">
+                <div>
+                  <h4>Informations personnelles</h4>
+                  <div class="kv"><b>NIP:</b> <span data-k="nip"></span></div>
+                  <div class="kv"><b>Nom:</b> <span data-k="nom_full"></span></div>
+                  <div class="kv"><b>Date de naissance:</b> <span data-k="dob"></span></div>
+                  <div class="kv"><b>Genre:</b> <span data-k="genre"></span></div>
+                  <div class="kv"><b>Téléphone:</b> <span data-k="telephone"></span></div>
+                  <div class="kv"><b>Email:</b> <span data-k="email"></span></div>
+                </div>
+
+                <div>
+                  <h4>Informations médicales</h4>
+                  <div class="kv"><b>Diagnostic:</b> <span data-k="diagnostic"></span></div>
+                  <div class="kv"><b>Stade:</b> <span data-k="stade"></span></div>
+                  <div class="kv"><b>Oncologue:</b> <span data-k="oncologue"></span></div>
+                </div>
+
+                <div>
+                  <h4>Contact d'urgence</h4>
+                  <div class="kv"><b>Nom:</b> <span data-k="urgent_nom"></span></div>
+                  <div class="kv"><b>Relation:</b> <span data-k="urgent_relation"></span></div>
+                  <div class="kv"><b>Téléphone:</b> <span data-k="urgent_tel"></span></div>
+                </div>
+
+                <div>
+                  <h4>Préférences</h4>
+                  <div class="kv"><b>Langue:</b> <span data-k="langue"></span></div>
+                  <div class="kv"><b>Communication:</b> <span data-k="communication"></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="warn">
+              <div class="t"><i class="fa-solid fa-triangle-exclamation"></i> Vérification importante</div>
+              <div>
+                Veuillez vérifier que toutes les informations sont correctes avant de finaliser l'inscription.
+                Ces données seront utilisées pour le suivi médical du patient.
+              </div>
+            </div>
+          </section>
+
+        </form>
+      </div>
+
+      <div class="footer">
+        <button class="btn" id="prevBtn" type="button">
+          <i class="fa-solid fa-chevron-left"></i> Précédent
+        </button>
+
+        <button class="btn btn-primary" id="nextBtn" type="button">
+          Suivant <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("wizardForm");
+    const steps = [...document.querySelectorAll(".step")];
+    const sections = [...document.querySelectorAll(".step-section")];
+
+    const bar = document.getElementById("bar");
+    const stepText = document.getElementById("stepText");
+    const percentText = document.getElementById("percentText");
+
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    let currentStep = 1;
+
+    // --- Helpers
+    function pctFromStep(step){ return step * 20; }
+
+    function showStep(step){
+      currentStep = Math.max(1, Math.min(5, step));
+
+      sections.forEach(sec => {
+        sec.classList.toggle("active", Number(sec.dataset.section) === currentStep);
+      });
+
+      // Stepper styles: done/active
+      steps.forEach(s => {
+        const n = Number(s.dataset.step);
+        s.classList.toggle("active", n === currentStep);
+        s.classList.toggle("done", n < currentStep);
+      });
+
+      const pct = pctFromStep(currentStep);
+      bar.style.width = pct + "%";
+      stepText.textContent = currentStep;
+      percentText.textContent = pct + "%";
+
+      prevBtn.disabled = currentStep === 1;
+
+      if(currentStep === 5){
+        nextBtn.classList.remove("btn-primary");
+        nextBtn.classList.add("btn-ok");
+        nextBtn.innerHTML = `<i class="fa-regular fa-circle-check"></i> Finaliser l'inscription`;
+        fillSummary();
+      }else{
+        nextBtn.classList.add("btn-primary");
+        nextBtn.classList.remove("btn-ok");
+        nextBtn.innerHTML = `Suivant <i class="fa-solid fa-chevron-right"></i>`;
+      }
+    }
+
+    // Valider seulement les champs de l'étape courante
+    function validateCurrentStep(){
+      const activeSection = sections.find(s => Number(s.dataset.section) === currentStep);
+      if(!activeSection) return true;
+
+      // Sélectionne les champs "required" dans l'étape active
+      const requiredFields = [...activeSection.querySelectorAll("[required]")];
+
+      for(const el of requiredFields){
+        if(!el.checkValidity()){
+          el.reportValidity();
+          el.focus();
+          return false;
+        }
+      }
+      return true;
+    }
+
+    // Récupère toutes les valeurs du form en objet
+    function getFormData(){
+      const fd = new FormData(form);
+      const obj = {};
+      for(const [k,v] of fd.entries()){
+        obj[k] = String(v ?? "");
+      }
+      return obj;
+    }
+
+    function formatDateFR(iso){
+      if(!iso) return "";
+      // iso = yyyy-mm-dd
+      const [y,m,d] = iso.split("-").map(x => parseInt(x,10));
+      if(!y || !m || !d) return iso;
+      const dt = new Date(y, m-1, d);
+      return dt.toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" });
+    }
+
+    function mapGenre(v){
+      if(v === "female") return "female";
+      if(v === "male") return "male";
+      if(v === "other") return "other";
+      return v || "";
+    }
+
+    function mapRelation(v){
+      const map = {
+        spouse: "spouse",
+        parent: "parent",
+        child: "child",
+        sibling: "sibling",
+        friend: "friend",
+        other: "other"
+      };
+      return map[v] || v || "";
+    }
+
+    function mapLangue(v){
+      const map = { fr:"fr", en:"en", ar:"ar" };
+      return map[v] || v || "";
+    }
+
+    function mapComms(raw){
+      if(!raw) return "Non renseigné";
+      const map = { sms:"SMS", email:"Email", phone:"Appel téléphonique", mail:"Courrier" };
+      return raw.split(",").map(x => map[x] || x).join(", ");
+    }
+
+    function fillSummary(){
+      const data = getFormData();
+
+      const summary = {
+        nip: data.nip || "",
+        nom_full: `${data.prenom || ""} ${data.nom || ""}`.trim(),
+        dob: formatDateFR(data.dob || ""),
+        genre: mapGenre(data.genre || ""),
+        telephone: data.telephone || "",
+        email: data.email || "",
+        diagnostic: data.diagnostic || "",
+        stade: data.stade || "",
+        oncologue: data.oncologue || "",
+        urgent_nom: data.urgent_nom || "",
+        urgent_relation: mapRelation(data.urgent_relation || ""),
+        urgent_tel: data.urgent_tel || "",
+        langue: mapLangue(data.langue || "fr"),
+        communication: mapComms(data.communication || "")
+      };
+
+      document.querySelectorAll("[data-k]").forEach(el => {
+        const k = el.getAttribute("data-k");
+        el.textContent = summary[k] ?? "";
+      });
+    }
+
+    // --- Buttons
+    prevBtn.addEventListener("click", () => showStep(currentStep - 1));
+
+    nextBtn.addEventListener("click", () => {
+      if(currentStep < 5){
+        if(!validateCurrentStep()) return;
+        showStep(currentStep + 1);
+      }else{
+        // Finalisation
+        if(!validateCurrentStep()) return; // (étape 5 n'a pas de required, mais safe)
+        const payload = getFormData();
+        console.log("FINAL PAYLOAD:", payload);
+        alert("Inscription finalisée (simulation). Regarde la console pour le payload.");
+      }
+    });
+
+    // --- Chips logic
+    const chipsWrap = document.getElementById("comChips");
+    const commHidden = form.querySelector('input[name="communication"]');
+
+    chipsWrap?.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if(!chip) return;
+      chip.classList.toggle("active");
+
+      const active = [...chipsWrap.querySelectorAll(".chip.active")]
+        .map(c => c.dataset.value)
+        .filter(Boolean);
+
+      commHidden.value = active.join(",");
+    });
+
+    // Optionnel: click stepper (tu peux le retirer si tu veux bloquer)
+    steps.forEach(s => {
+      s.addEventListener("click", () => {
+        const target = Number(s.dataset.step);
+        // Empêche d'aller plus loin si étape courante invalide
+        if(target > currentStep && !validateCurrentStep()) return;
+        showStep(target);
+      });
+    });
+
+    showStep(1);
+  </script>
+</body>
+</html>
