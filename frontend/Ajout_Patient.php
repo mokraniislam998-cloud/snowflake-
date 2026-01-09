@@ -185,10 +185,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <i class="fa-regular fa-calendar"></i>
         <span>Programmation</span>
       </a>
-      <a class="menu-item" href="#">
-        <i class="fa-regular fa-user"></i>
-        <span>Planning Infirmier</span>
-      </a>
+<a class="menu-item" href="view/Ajout_infirmier.php">
+  <i class="fa-regular fa-user"></i>
+  <span>Planning Infirmier</span>
+</a>
 
       <a class="menu-item btn-pill active" href="#">
         <i class="fa-solid fa-user-plus"></i>

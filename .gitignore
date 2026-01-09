@@ -8,8 +8,7 @@ venv/
 .venv/
 env/
 
-# Jupyter
-.ipynb_checkpoints/
+
 
 # ML models / big binaries
 *.pth
